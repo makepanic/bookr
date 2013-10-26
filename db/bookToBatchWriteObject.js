@@ -21,6 +21,22 @@ var specialRules = {
     }
 };
 
+function buildIndex(book){
+    var forIndex = ['title', 'subtitle', 'authors', 'year', 'publisher', 'isbn10', 'isbn13', 'textSnippet'],
+        properties = [];
+
+    forIndex.forEach(function (prop) {
+        var key;
+
+        if (book.hasOwnProperty(prop)) {
+            key = Object.keys(book[prop])[0];
+            properties.push(book[prop][key]);
+        }
+    });
+
+    return properties.join('|');
+}
+
 module.exports = function (book) {
     var prop,
         type,
@@ -48,10 +64,13 @@ module.exports = function (book) {
 
                     bwObj.PutRequest.Item = item;
                 }
-
             }
         }
     }
+
+    bwObj.PutRequest.Item.index = {
+        'S': buildIndex(bwObj.PutRequest.Item).toUpperCase()
+    };
 
     return bwObj;
 };

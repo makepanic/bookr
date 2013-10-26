@@ -22,8 +22,36 @@ exports.search = function (req, res) {
     if (query && typeof req.params.query === 'string') {
 
         // TODO: check for db results
+        dynamodb.scan({
+            TableName: tableName,
+            Limit: 10,
+            AttributesToGet: [
+                'hash',
+                'authors',
+                'isbn10',
+                'isbn13',
+                'publisher',
+                'subtitle',
+                'textSnipper',
+                'thumbnailNormal',
+                'thumbnailSmall',
+                'title',
+                'year'
+            ],
+            ScanFilter: {
+                index: {
+                    AttributeValueList: [{
+                        "S": query.toUpperCase()
+                    }],
+                    ComparisonOperator: 'CONTAINS'
+                }
+            }
+        }, function (err, data) {
+            if (err) throw err;
 
-        res.send('db results');
+            console.log(data);
+            res.send(data);
+        });
     } else {
         // has invalid query
         res.send('Error');
