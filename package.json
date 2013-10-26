@@ -1,29 +1,30 @@
 {
-    "name": "bookr",
-    "description": "bookr project core",
-    "version": "0.0.1",
-    "license": "GPLv2",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/makepanic/bookr"
-    },
-    "bugs": "https://github.com/makepanic/bookr/issues",
-    "engines": [
-        "node"
-    ],
-    "dependencies": {
-        "express": "3.x",
-        "q": "~0.9.7",
-        "lodash": "~2.2.1",
-        "request": "~2.27.0",
-        "nconf": "~0.6.7",
-        "bookr-crawler": "git+ssh://git@github.com:makepanic/bookr-crawler.git#master"
-    },
-    "devDependencies": {
-        "grunt-neuter": "~0.6.0",
-        "grunt": "~0.4.1",
-        "grunt-contrib-watch": "~0.5.3",
-        "grunt-contrib-concat": "~0.3.0"
-    }
+  "name": "bookr",
+  "description": "bookr project core",
+  "version": "0.0.1",
+  "license": "GPLv2",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makepanic/bookr"
+  },
+  "bugs": "https://github.com/makepanic/bookr/issues",
+  "engines": [
+    "node"
+  ],
+  "dependencies": {
+    "express": "3.x",
+    "q": "~0.9.7",
+    "lodash": "~2.2.1",
+    "request": "~2.27.0",
+    "nconf": "~0.6.7",
+    "bookr-crawler": "git+ssh://git@github.com:makepanic/bookr-crawler.git#master",
+    "aws-sdk": "~1.10.0"
+  },
+  "devDependencies": {
+    "grunt-neuter": "~0.6.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-concat": "~0.3.0"
+  }
 }

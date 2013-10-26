@@ -5,7 +5,8 @@
 'use strict';
 
 // load packages
-var express = require('express'),
+var bootstrap = require('./db/bootstrap'),
+    express = require('express'),
     http = require('http'),
 
     // routes
@@ -34,7 +35,13 @@ app.get('/', function (req, res) {
     res.send('please us the /search/:provider api');
 });
 app.get('/search/:query', searchRoute.search);
+app.get('/search/:query/more', searchRoute.crawl);
 
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+bootstrap(function (err, data) {
+    if (err) throw err;
+
+    console.log('bootstrapping done', data.status);
+    http.createServer(app).listen(app.get('port'), function () {
+        console.log('Express server listening on port ' + app.get('port'));
+    });
 });
