@@ -1,7 +1,6 @@
 // aws setup
 var bookrCrawler = require('bookr-crawler'),
-    bookToBatchWriteObject = require('../db/bookToBatchWriteObject'),
-    tableName = 'bookr-books',
+    createBookIndex = require('../db/createBookIndex'),
     provider = [
         'google',
         'isbndb',
@@ -11,43 +10,24 @@ var bookrCrawler = require('bookr-crawler'),
 exports.search = function(collection) {
 
     return function (req, res) {
-        var query = req.params.query,
-            inDb = false;
+        var query = req.params.query;
 
         // check if request param query exists and if it's a string
         if (query && typeof req.params.query === 'string') {
 
-            // TODO: check for db results
-            dynamodb.scan({
-                TableName: tableName,
-                Limit: 10,
-                AttributesToGet: [
-                    'hash',
-                    'authors',
-                    'isbn10',
-                    'isbn13',
-                    'publisher',
-                    'subtitle',
-                    'textSnipper',
-                    'thumbnailNormal',
-                    'thumbnailSmall',
-                    'title',
-                    'year'
-                ],
-                ScanFilter: {
-                    index: {
-                        AttributeValueList: [{
-                            "S": query.toUpperCase()
-                        }],
-                        ComparisonOperator: 'CONTAINS'
-                    }
+            console.log('searching for', query);
+
+            collection.find({
+                index: {
+                    $regex: '.*' + query + '.*',
+                    $options: 'i'
                 }
-            }, function (err, data) {
+            }).toArray(function (err, data) {
                 if (err) throw err;
 
-                console.log(data);
                 res.send(data);
             });
+
         } else {
             // has invalid query
             res.send('Error');
@@ -58,8 +38,7 @@ exports.search = function(collection) {
 exports.crawl = function (collection) {
 
     return function(req, res) {
-        var query = req.params.query,
-            inDb = false;
+        var query = req.params.query;
 
         // check if request param query exists and if it's a string
         if (query && typeof req.params.query === 'string') {
@@ -94,23 +73,37 @@ exports.crawl = function (collection) {
 
                         if (err) throw err;
 
-                        // compare found items with crawl result
-                        docs.forEach(function (item) {
-                            if (!mapPresentation.hasOwnProperty(item._id)) {
-                                forInsert.push(item);
-                            }
-                        });
+                        if (docs.length) {
+                            // compare found items with crawl result
+                            docs.forEach(function (item) {
+                                if (!mapPresentation.hasOwnProperty(item._id)) {
+                                    // modify item and create keywords field
+                                    item.index = createBookIndex(item);
+                                    console.log('inserting with', item.index);
+
+                                    forInsert.push(item);
+                                }
+                            });
+                        } else {
+
+                            forInsert = data.map(function (item, index) {
+                                item.index = createBookIndex(item);
+                                return item;
+                            });
+                        }
 
                         // check if items for inserting exist
                         if (forInsert.length) {
 
                             console.log('inserting', forInsert.length, 'items');
-
                             collection.insert(forInsert, function (err, docs) {
                                 if(err) throw err;
 
                                 console.log('insert done, returning crawled data');
-                                res.send(data);
+                                // remove index from response data
+                                res.send(data.forEach(function (el) {
+                                    delete el.index;
+                                }));
 
                             });
                         } else {

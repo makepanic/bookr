@@ -6,20 +6,32 @@ module.exports = function (fn) {
     console.log('connecting to mongodb');
 
     mongoClient.connect("mongodb://localhost:27018/exampleDb", function(err, db) {
-        var collection;
+        var collection,
+            adminDb;
+
         if(!err) {
             // no error
 
-            // create collection
-            collection = db.collection(tableName);
+            adminDb = db.admin();
+            adminDb.command({
+                setParameter: 1,
+                textSearchEnabled: true
+            }, function (err, data) {
+                if (err) throw err;
 
-            // call fn
-            fn(null, {
-                status: 'succesfully connected',
-                // TODO: remove db if not needed
-                db: db,
-                collection: collection
+                console.log('adminCommand executed', data);
+
+                // create collection
+                collection = db.collection(tableName);
+
+                // call fn
+                fn(null, {
+                    status: 'succesfully connected',
+                    db: db,
+                    collection: collection
+                });
             });
+
 
         } else {
             fn(err);

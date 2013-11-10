@@ -40,8 +40,8 @@ bootstrap(function (err, data) {
 
     console.log('bootstrapping done', data.status);
 
-    //app.get('/search/:query', searchRoute.search(data.collection));
-    app.get('/search/:query/more', searchRoute.crawl(data.collection));
+    app.get('/search/:query', searchRoute.search(data.collection, data.db));
+    app.get('/search/:query/more', searchRoute.crawl(data.collection, data.db));
 
     http.createServer(app).listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));
