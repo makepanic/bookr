@@ -100,10 +100,14 @@ exports.crawl = function (collection) {
                                 if(err) throw err;
 
                                 console.log('insert done, returning crawled data');
+
                                 // remove index from response data
-                                res.send(data.forEach(function (el) {
+                                data.forEach(function (el) {
                                     delete el.index;
-                                }));
+                                });
+
+                                // send response
+                                res.send(data);
 
                             });
                         } else {
