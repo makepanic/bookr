@@ -12,8 +12,6 @@ module.exports = function (fn) {
         if(!err) {
             // no error
 
-            console.log('adminCommand executed', data);
-
             // create collection
             collection = db.collection(tableName);
 
