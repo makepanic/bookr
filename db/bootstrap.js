@@ -1,50 +1,28 @@
-var AWS,
-    dynamodb,
-    tableName = 'bookr-books';
-
-AWS = require('aws-sdk');
-AWS.config.loadFromPath('./aws-cred.json');
-dynamodb = new AWS.DynamoDB();
+var tableName = 'bookr-books',
+    mongodb = require('mongodb'),
+    mongoClient = mongodb.MongoClient;
 
 module.exports = function (fn) {
-    dynamodb.describeTable({
-        TableName: tableName
-    }, function (err, data) {
-        if (err && err.name === 'ResourceNotFoundException') {
+    console.log('connecting to mongodb');
 
-            // table does not exist, create it
-            dynamodb.createTable({
-                TableName: tableName,
-                AttributeDefinitions: [{
-                        AttributeName: 'hash',
-                        AttributeType: 'S'
-                    }],
-                KeySchema: [{
-                    AttributeName: 'hash',
-                    KeyType: 'HASH'
-                }],
-                ProvisionedThroughput: {
-                    ReadCapacityUnits: 5,
-                    WriteCapacityUnits: 10
-                }
-            }, function (err, data) {
-                if (err) throw err;
-
-                fn(null, {
-                    status: 'database created'
-                })
-            })
-
-        } else if(err){
-            throw err;
-        } else {
-
+    mongoClient.connect("mongodb://localhost:27018/exampleDb", function(err, db) {
+        var collection;
+        if(!err) {
             // no error
+
+            // create collection
+            collection = db.collection(tableName);
+
+            // call fn
             fn(null, {
-                status: 'database already exists'
+                status: 'succesfully connected',
+                // TODO: remove db if not needed
+                db: db,
+                collection: collection
             });
+
+        } else {
+            fn(err);
         }
-
     });
-
 };

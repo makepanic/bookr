@@ -34,13 +34,15 @@ if ('development' === app.get('env')) {
 app.get('/', function (req, res) {
     res.send('please us the /search/:provider api');
 });
-app.get('/search/:query', searchRoute.search);
-app.get('/search/:query/more', searchRoute.crawl);
 
 bootstrap(function (err, data) {
     if (err) throw err;
 
     console.log('bootstrapping done', data.status);
+
+    //app.get('/search/:query', searchRoute.search(data.collection));
+    app.get('/search/:query/more', searchRoute.crawl(data.collection));
+
     http.createServer(app).listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));
     });
