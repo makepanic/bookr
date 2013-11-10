@@ -70,13 +70,56 @@ exports.crawl = function (collection) {
                 query: query,
                 prefer: 'google'
             }).then(function (data) {
+                var hashArray = [],
+                    mapPresentation = {};
 
                 console.log('inserting results', data.length);
-                collection.insert(data, function (err, docs) {
-                    console.log('insert done', docs);
-                    res.send(docs);
+
+                // rename hash to _id, delete hash
+                data.forEach(function (item) {
+                    item._id = item.hash;
+                    hashArray.push(item._id);
+                    delete item.hash;
+
+                    mapPresentation[item._id] = item;
                 });
 
+                // find elements with created data
+                collection.find({
+                    _id: {
+                        $in: hashArray
+                    }
+                }).toArray(function (err, docs) {
+                        var forInsert = [];
+
+                        if (err) throw err;
+
+                        // compare found items with crawl result
+                        docs.forEach(function (item) {
+                            if (!mapPresentation.hasOwnProperty(item._id)) {
+                                forInsert.push(item);
+                            }
+                        });
+
+                        // check if items for inserting exist
+                        if (forInsert.length) {
+
+                            console.log('inserting', forInsert.length, 'items');
+
+                            collection.insert(forInsert, function (err, docs) {
+                                if(err) throw err;
+
+                                console.log('insert done, returning crawled data');
+                                res.send(data);
+
+                            });
+                        } else {
+
+                            console.log('nothing inserted, returning crawled data');
+                            res.send(data);
+
+                        }
+                    });
             });
 
         } else {
