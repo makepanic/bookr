@@ -1,4 +1,11 @@
 {
+    "database": {
+        "name": "bookr",
+        "tables": {
+            "books": "books"
+        },
+        "server": "localhost:27018"
+    },
     "isbndb": {
         "key": "YOUR-ISBNDB-API-KEY-HERE"
     }
