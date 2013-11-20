@@ -11,6 +11,7 @@ var bootstrap = require('./db/bootstrap'),
 
     // routes
     searchRoute = require('./routes/search'),
+    bookRoute = require('./routes/book'),
 
     // initialize express
     app = express();
@@ -40,7 +41,13 @@ bootstrap(function (err, data) {
 
     console.log('bootstrapping done', data.status);
 
+    app.all('*', function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    });
     app.get('/search/:query', searchRoute.search(data.collection, data.db));
+    app.get('/book/:id', bookRoute.book(data.collection, data.db));
     app.get('/search/:query/more', searchRoute.crawl(data.collection, data.db));
 
     http.createServer(app).listen(app.get('port'), function () {
