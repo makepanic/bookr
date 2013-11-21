@@ -1,6 +1,7 @@
 // aws setup
 var bookrCrawler = require('bookr-crawler'),
     createBookIndex = require('../db/createBookIndex'),
+    reduceBookList = require('../db/reduceBookList'),
     provider = [
         'google',
         'isbndb',
@@ -25,7 +26,7 @@ exports.search = function(collection) {
             }).toArray(function (err, data) {
                 if (err) throw err;
 
-                res.send(data);
+                res.send( reduceBookList.uniqueBooks(data));
             });
 
         } else {
@@ -87,7 +88,12 @@ exports.crawl = function (collection) {
                         } else {
 
                             forInsert = data.map(function (item, index) {
+                                // field that is used when querying the database
                                 item.index = createBookIndex(item);
+
+                                // field that contains other indexes later
+                                item.alsoId = [];
+
                                 return item;
                             });
                         }
