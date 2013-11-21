@@ -37,7 +37,7 @@ function indexProperty(prop){
 
 module.exports = function (book) {
     var index = [],
-        forIndex = ['title', 'subtitle', 'authors', 'year', 'publisher', 'isbn10', 'textSnippet'];
+        forIndex = ['title', 'subtitle', 'authors', 'year', 'publisher', 'isbn', 'textSnippet'];
 
     forIndex.forEach(function (prop) {
         if (book.hasOwnProperty(prop)) {
