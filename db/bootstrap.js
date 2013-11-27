@@ -1,5 +1,6 @@
 var dbName,
-    tableName,
+    superBookTableName,
+    versionTableName,
     server,
     mongodb = require('mongodb'),
     nconf = require('nconf'),
@@ -11,25 +12,31 @@ nconf.file({
 
 server = nconf.get('database:server');
 dbName = nconf.get('database:name');
-tableName = nconf.get('database:tables:books');
+superBookTableName = nconf.get('database:tables:books');
+versionTableName = nconf.get('database:tables:versions');
 
 module.exports = function (fn) {
     console.log('connecting to mongodb');
 
     mongoClient.connect("mongodb://" + server + "/" + dbName, function(err, db) {
-        var collection;
+        var collection,
+            versionCollection;
 
         if(!err) {
             // no error
 
             // create collection
-            collection = db.collection(tableName);
+            collection = db.collection(superBookTableName);
+            versionCollection = db.collection(versionTableName);
 
             // call fn
             fn(null, {
                 status: 'succesfully connected',
                 db: db,
-                collection: collection
+                collections: {
+                    superBooks: collection,
+                    versions: versionCollection
+                }
             });
         } else {
             fn(err);

@@ -46,9 +46,10 @@ bootstrap(function (err, data) {
         res.header("Access-Control-Allow-Headers", "X-Requested-With");
         next();
     });
-    app.get('/search/:query', searchRoute.search(data.collection, data.db));
-    app.get('/book/:id', bookRoute.book(data.collection, data.db));
-    app.get('/search/:query/more', searchRoute.crawl(data.collection, data.db));
+
+    app.get('/search/:query', searchRoute.search(data.collections));
+    app.get('/book/:id', bookRoute.book(data.collections));
+    app.get('/search/:query/more', searchRoute.crawl(data.collections));
 
     http.createServer(app).listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));

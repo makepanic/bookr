@@ -1,6 +1,8 @@
 // aws setup
 var bookrCrawler = require('bookr-crawler'),
-    createBookIndex = require('../db/createBookIndex'),
+    Q = require('q'),
+    insertSuperBooksIfNotExists = require('../db/insertSuperBooksIfNotExists'),
+    insertVersionsIfNotExists = require('../db/insertVersionsIfNotExists'),
     reduceBookList = require('../db/reduceBookList'),
     provider = [
         'google',
@@ -8,8 +10,7 @@ var bookrCrawler = require('bookr-crawler'),
         'openlibrary'
     ];
 
-exports.search = function(collection) {
-
+exports.search = function(collections) {
     return function (req, res) {
         var query = req.params.query;
 
@@ -18,7 +19,7 @@ exports.search = function(collection) {
 
             console.log('searching for', query);
 
-            collection.find({
+            collections.superBooks.find({
                 index: {
                     $regex: '.*' + query + '.*',
                     $options: 'i'
@@ -36,7 +37,7 @@ exports.search = function(collection) {
     };
 };
 
-exports.crawl = function (collection) {
+exports.crawl = function (collections) {
 
     return function(req, res) {
         var query = req.params.query;
@@ -50,79 +51,18 @@ exports.crawl = function (collection) {
                 query: query,
                 prefer: 'google'
             }).then(function (data) {
-                var hashArray = [],
-                    mapPresentation = {};
 
-                console.log('inserting results', data.length);
+                // async insert if not exists
+                Q.all([
 
-                // rename hash to _id, delete hash
-                data.forEach(function (item) {
-                    item._id = item.hash;
-                    hashArray.push(item._id);
-                    delete item.hash;
+                    insertSuperBooksIfNotExists(collections.superBooks, data.superBooks),
+                    insertVersionsIfNotExists(collections.versions, data.versions)
 
-                    mapPresentation[item._id] = item;
+                ]).then(function (superBooks, versions) {
+                    // return superbooks to api result
+                    res.send(superBooks);
                 });
 
-                // find elements with created data
-                collection.find({
-                    _id: {
-                        $in: hashArray
-                    }
-                }).toArray(function (err, docs) {
-                        var forInsert = [];
-
-                        if (err) throw err;
-
-                        if (docs.length) {
-                            // compare found items with crawl result
-                            docs.forEach(function (item) {
-                                if (!mapPresentation.hasOwnProperty(item._id)) {
-                                    // modify item and create keywords field
-                                    item.index = createBookIndex(item);
-                                    console.log('inserting with', item.index);
-
-                                    forInsert.push(item);
-                                }
-                            });
-                        } else {
-
-                            forInsert = data.map(function (item, index) {
-                                // field that is used when querying the database
-                                item.index = createBookIndex(item);
-
-                                // field that contains other indexes later
-                                item.alsoId = [];
-
-                                return item;
-                            });
-                        }
-
-                        // check if items for inserting exist
-                        if (forInsert.length) {
-
-                            console.log('inserting', forInsert.length, 'items');
-                            collection.insert(forInsert, function (err, docs) {
-                                if(err) throw err;
-
-                                console.log('insert done, returning crawled data');
-
-                                // remove index from response data
-                                data.forEach(function (el) {
-                                    delete el.index;
-                                });
-
-                                // send response
-                                res.send(data);
-
-                            });
-                        } else {
-
-                            console.log('nothing inserted, returning crawled data');
-                            res.send(data);
-
-                        }
-                    });
             });
 
         } else {

@@ -2,9 +2,10 @@
     "database": {
         "name": "bookr",
         "tables": {
-            "books": "books"
+            "books": "books",
+            "versions": "versions"
         },
-        "server": "localhost:27018"
+        "server": "192.168.178.33:27018"
     },
     "isbndb": {
         "key": "YOUR-ISBNDB-API-KEY-HERE"
