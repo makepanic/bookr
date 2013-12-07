@@ -58,7 +58,7 @@ exports.version = function(collections) {
                                     // found result
                                     res.send(data[0]);
                                 } else {
-                                    res.send('nothing found')
+                                    res.send({})
                                 }
                             });
                         });
