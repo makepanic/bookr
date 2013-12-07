@@ -24,7 +24,7 @@ exports.book = function(collections) {
             }).toArray(function (err, data) {
                     if (err) throw err;
 
-                    res.send(data);
+                    res.send(data.length ? data[0] : {});
                 });
 
         } else {
