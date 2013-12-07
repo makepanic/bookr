@@ -5,7 +5,7 @@
 'use strict';
 
 // load packages
-var bootstrap = require('./db/bootstrap'),
+var bootstrap = require('./actions/db/bootstrap'),
     express = require('express'),
     http = require('http'),
 
@@ -49,6 +49,7 @@ bootstrap(function (err, data) {
 
     app.get('/search/:query', searchRoute.search(data.collections));
     app.get('/book/:id', bookRoute.book(data.collections));
+    app.get('/book/version/:isbn', bookRoute.version(data.collections));
     app.get('/search/:query/more', searchRoute.crawl(data.collections));
 
     http.createServer(app).listen(app.get('port'), function () {
