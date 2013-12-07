@@ -9,7 +9,7 @@ var findVersion = require('../actions/db/findVersion'),
         'openlibrary'
     ];
 
-exports.book = function(collection) {
+exports.book = function(collections) {
 
     return function (req, res) {
         var id = req.params.id;
@@ -19,7 +19,7 @@ exports.book = function(collection) {
 
             console.log('searching for', id);
 
-            collection.find({
+            collections.superBooks.find({
                 _id: id
             }).toArray(function (err, data) {
                     if (err) throw err;
