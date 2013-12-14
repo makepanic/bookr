@@ -9,6 +9,22 @@ var findVersion = require('../actions/db/findVersion'),
         'openlibrary'
     ];
 
+/**
+ * Prepares version data for clients
+ * They currently don't need index, hash and _id
+ * @param version
+ * @returns {*}
+ */
+function prepareVersionForDisplay(version){
+
+    // remove unimportant properties
+    delete version.index;
+    delete version.hash;
+    delete version._id;
+
+    return version;
+}
+
 exports.book = function(collections) {
 
     return function (req, res) {
@@ -49,14 +65,16 @@ exports.version = function(collections) {
                 findVersion(collections, isbns).then(function (data) {
                     if (data.length) {
                         // found result
-                        res.send(data[0]);
+
+                        res.send(prepareVersionForDisplay(data[0]));
+
                     } else {
                         // search with isbn10 and find version again
                         crawl(collections, isbns[0]).then(function () {
                             findVersion(collections, isbns).then(function (data) {
                                 if (data.length) {
                                     // found result
-                                    res.send(data[0]);
+                                    res.send(prepareVersionForDisplay(data[0]));
                                 } else {
                                     res.send({})
                                 }
