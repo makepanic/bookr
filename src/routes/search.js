@@ -6,7 +6,6 @@ exports.search = function(collections) {
     return function (req, res) {
         var query = req.params.query,
             isbn,
-            field,
             isbnFindObject = {};
 
         // check if request param query exists and if it's a string
@@ -15,7 +14,8 @@ exports.search = function(collections) {
             console.log('searching for', query);
 
             // check if query is isbn
-            if (isbn = ISBN.parse(query)) {
+            isbn = ISBN.parse(query);
+            if (isbn) {
 
                 // build object that is used to find in collection
                 isbnFindObject[isbn.isIsbn10() ? 'isbn.isbn10' : 'isbn.isbn13'] =  query.trim().toUpperCase();
@@ -24,14 +24,18 @@ exports.search = function(collections) {
 
                 // find with isbnFindObject
                 collections.versions.find(isbnFindObject).toArray(function (err, data) {
-                    if (err) throw err;
+                    if (err) {
+                        throw err;
+                    }
 
                     if (data.length) {
                         // found version, find superBook
                         collections.superBooks.find({
                             '_id': data[0].superBook
                         }).toArray(function (err, data) {
-                            if (err) throw err;
+                            if (err) {
+                                throw err;
+                            }
                             res.send(data);
                         });
                     } else {
@@ -53,7 +57,9 @@ exports.search = function(collections) {
                         $options: 'i'
                     }
                 }).toArray(function (err, data) {
-                    if (err) throw err;
+                    if (err) {
+                        throw err;
+                    }
 
                     res.send(data);
                 });

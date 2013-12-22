@@ -18,7 +18,7 @@ versionTableName = nconf.get('database:tables:versions');
 module.exports = function (fn) {
     console.log('connecting to mongodb');
 
-    mongoClient.connect("mongodb://" + server + "/" + dbName, function(err, db) {
+    mongoClient.connect('mongodb://' + server + '/' + dbName, function(err, db) {
         var collection,
             versionCollection;
 

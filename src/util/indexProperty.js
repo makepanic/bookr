@@ -1,20 +1,9 @@
-var paraclete = require('paraclete');
+var paraclete = require('paraclete'),
+    indexProperty,
+    indexArray,
+    indexObject;
 
-function indexObject(obj){
-    var objIndex,
-        index = [];
-
-    for(objIndex in obj) {
-        if (obj.hasOwnProperty(objIndex)) {
-            index = index.concat(indexProperty(obj[objIndex]));
-        }
-    }
-    return index;
-}
-function indexArray(array) {
-    return array;
-}
-function indexProperty(prop){
+indexProperty = function (prop){
     var type = paraclete.Type.find(prop),
         index;
 
@@ -33,7 +22,22 @@ function indexProperty(prop){
             break;
     }
     return index;
-}
+};
+
+indexObject = function(obj){
+    var objIndex,
+        index = [];
+
+    for(objIndex in obj) {
+        if (obj.hasOwnProperty(objIndex)) {
+            index = index.concat(indexProperty(obj[objIndex]));
+        }
+    }
+    return index;
+};
+indexArray = function (array) {
+    return array;
+};
 
 /**
  * creates an array of all fields for a value
@@ -42,4 +46,4 @@ function indexProperty(prop){
  */
 module.exports = function (property) {
     return indexProperty(property);
-}
+};

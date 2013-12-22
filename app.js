@@ -5,13 +5,14 @@
 'use strict';
 
 // load packages
-var bootstrap = require('./actions/db/bootstrap'),
-    express = require('express'),
-    http = require('http'),
+var bootstrap = require('./src/actions/db/bootstrap'),
 
     // routes
-    searchRoute = require('./routes/search'),
-    bookRoute = require('./routes/book'),
+    searchRoute = require('./src/routes/search'),
+    bookRoute = require('./src/routes/book'),
+
+    express = require('express'),
+    http = require('http'),
 
     // initialize express
     app = express();

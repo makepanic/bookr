@@ -7,7 +7,9 @@ module.exports = function (collections, isbns) {
         'isbn.isbn10': isbns[0],
         'isbn.isbn13': isbns[1]
     }).toArray(function (err, data) {
-        if (err) throw err;
+        if (err) {
+            throw err;
+        }
 
         deferred.resolve(data);
     });

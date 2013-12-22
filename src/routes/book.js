@@ -1,13 +1,6 @@
 // aws setup
 var findVersion = require('../actions/db/findVersion'),
-    crawl = require('../actions/crawl'),
-    bookrCrawler = require('bookr-crawler'),
-    createBookIndex = require('../db/createBookIndex'),
-    provider = [
-        'google',
-        'isbndb',
-        'openlibrary'
-    ];
+    crawl = require('../actions/crawl');
 
 /**
  * Prepares version data for clients
@@ -38,7 +31,9 @@ exports.book = function(collections) {
             collections.superBooks.find({
                 _id: id
             }).toArray(function (err, data) {
-                    if (err) throw err;
+                    if (err) {
+                        throw err;
+                    }
 
                     res.send(data.length ? data[0] : {});
                 });
@@ -76,7 +71,8 @@ exports.version = function(collections) {
                                     // found result
                                     res.send(prepareVersionForDisplay(data[0]));
                                 } else {
-                                    res.send({})
+                                    // TODO: check if isbn pair exists in superBook
+                                    res.send({});
                                 }
                             });
                         });

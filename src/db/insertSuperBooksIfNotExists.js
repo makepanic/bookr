@@ -1,5 +1,5 @@
 var Q = require('q'),
-    createSuperBookIndex = require('../db/createSuperBookIndex');
+    createSuperBookIndex = require('./createSuperBookIndex');
 
 /**
  *
@@ -31,7 +31,9 @@ module.exports = function (collection, superBooks) {
             $in: superIds
         }
     }).toArray(function (err, docs) {
-        if (err) throw err;
+        if (err) {
+            throw err;
+        }
 
         if (docs.length) {
             // found items with id in superIds
@@ -63,7 +65,9 @@ module.exports = function (collection, superBooks) {
 
             console.log('inserting', forInsert.length, 'items');
             collection.insert(forInsert, function (err, docs) {
-                if(err) throw err;
+                if(err) {
+                    throw err;
+                }
 
                 console.log('insert done, returning crawled data');
 
@@ -80,4 +84,4 @@ module.exports = function (collection, superBooks) {
     });
 
     return deferred.promise;
-}
+};

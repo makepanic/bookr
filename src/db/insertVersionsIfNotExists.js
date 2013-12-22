@@ -1,5 +1,5 @@
 var Q = require('q'),
-    createBookIndex = require('../db/createBookIndex');
+    createBookIndex = require('./createBookIndex');
 
 /**
  *
@@ -26,7 +26,9 @@ module.exports = function (collection, versions) {
             $in: versionHashes
         }
     }).toArray(function (err, docs) {
-        if (err) throw err;
+        if (err) {
+            throw err;
+        }
 
             if (docs.length) {
                 docs.forEach(function (item) {
@@ -51,7 +53,9 @@ module.exports = function (collection, versions) {
 
                 console.log('inserting', forInsert.length, 'items');
                 collection.insert(forInsert, function (err, docs) {
-                    if(err) throw err;
+                    if(err) {
+                        throw err;
+                    }
 
                     console.log('insert done, returning crawled data');
 
@@ -69,4 +73,4 @@ module.exports = function (collection, versions) {
 
 
     return deferred.promise;
-}
+};
