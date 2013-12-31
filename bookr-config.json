@@ -5,7 +5,7 @@
             "books": "books",
             "versions": "versions"
         },
-        "server": "192.168.178.33:27018"
+        "server": "54.220.87.138:10102"
     },
     "isbndb": {
         "key": "YOUR-ISBNDB-API-KEY-HERE"
