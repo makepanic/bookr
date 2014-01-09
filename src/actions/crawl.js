@@ -4,7 +4,7 @@ var bookrCrawler = require('bookr-crawler'),
     insertVersionsIfNotExists = require('../db/insertVersionsIfNotExists'),
     provider = [
         'google',
-        //'isbndb',
+        'isbndb',
         'openlibrary'
     ];
 
