@@ -5,7 +5,7 @@
             "books": "books",
             "versions": "versions"
         },
-        "server": "54.220.87.138:10102"
+        "server": "YOUR-MONGODB-IP-HERE"
     },
     "isbndb": {
         "key": "YOUR-ISBNDB-API-KEY-HERE"
