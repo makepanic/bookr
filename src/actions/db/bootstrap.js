@@ -1,9 +1,9 @@
+var mongodb = require('mongodb'),
+    nconf = require('nconf');
 var dbName,
     superBookTableName,
     versionTableName,
     server,
-    mongodb = require('mongodb'),
-    nconf = require('nconf'),
     mongoClient = mongodb.MongoClient;
 
 nconf.file({

@@ -1,5 +1,5 @@
-var paraclete = require('paraclete'),
-    indexProperty,
+var paraclete = require('paraclete');
+var indexProperty,
     indexArray,
     indexObject;
 
